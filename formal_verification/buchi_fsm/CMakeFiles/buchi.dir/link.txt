@@ -1,1 +1,0 @@
-/usr/bin/c++ -g CMakeFiles/buchi.dir/src/main.cpp.o CMakeFiles/buchi.dir/src/ltl.cpp.o CMakeFiles/buchi.dir/src/BuchiCreator.cpp.o CMakeFiles/buchi.dir/src/fsm.cpp.o -o buchi 
