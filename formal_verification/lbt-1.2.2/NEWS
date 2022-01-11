@@ -1,0 +1,64 @@
+LBT NEWS -- history of user-visible changes.  29th December 2004
+Copyright © 2001,2002,2004 Marko Mäkelä
+Copyright © 2004 Heikki Tauriainen
+See the end for copying conditions.
+
+* LBT 1.2.2 and LBT 1.1.1 fix problems with run-time stack overflow
+(no user-visible changes)
+
+** The use of recursion in previous versions of LBT may lead to a crash
+with large input formulae due to run-time stack overflow.  LBT 1.1.1 and
+LBT 1.2.2 attempt to improve the robustness of the tool by replacing recursion
+with explicit stacks.  The difference between LBT 1.1.1 and LBT 1.2.2
+is the same as the difference between LBT 1.2 and LBT 1.1, i.e., LBT 1.2.2
+may be more efficient on small input formulae.
+
+* LBT 1.2.1 improves the documentation only
+
+** A few minor errors were corrected in the grammar description.
+
+** The pictures of the automata were redrawn with anti-aliased fonts.
+
+* LBT 1.2 is an optimized release with no user-visible changes
+
+** Formula sets are now maintained in bit vectors
+instead of Standard Template Library sets.  This typically reduces
+the memory usage and improves the speed of the program.  The generated
+automata should be of the same size as with LBT 1.1, but the acceptance
+sets for the states can be displayed in a slightly different order.
+
+* New operators in LBT 1.1
+
+** The equivalence and nonequivalence (exclusive or) operators are supported
+natively by the translation algorithm of LBT 1.1.  When these operators are
+implemented in the core language, formulae that contain these operators can
+be expressed in a much more compact way.
+
+* LBT 1.0
+
+** A complete rewrite of the algorithms from Mauno Rönkkö's LBT2BUCHI
+and Heikki Tauriainen's super_aasa_lbt.
+
+** Common subformula elimination reduces the size of the generated automata.
+
+
+----------------------------------------------------------------------
+Copyright information:
+
+Copyright © 2001,2002,2004 Marko Mäkelä
+Copyright © 2004 Heikki Tauriainen
+
+   Permission is granted to anyone to make or distribute verbatim copies
+   of this document as received, in any medium, provided that the
+   copyright notice and this permission notice are preserved,
+   thus giving the recipient permission to redistribute in turn.
+
+   Permission is granted to distribute modified versions
+   of this document, or of portions of it,
+   under the above conditions, provided also that they
+   carry prominent notices stating who last changed them.
+
+Local variables:
+mode: outline
+paragraph-separate: "[ 	]*$"
+end:

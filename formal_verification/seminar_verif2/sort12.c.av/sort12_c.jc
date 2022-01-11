@@ -1,0 +1,258 @@
+
+axiomatic Padding {
+
+  logic type padding
+  
+}
+
+tag voidP = {
+}
+
+type voidP = [voidP]
+
+tag charP = voidP with {
+  int8 charM: 8;
+}
+
+tag intP = {
+  int32 intM: 32;
+}
+
+type intP = [intP]
+
+predicate inversion{L}(intP[..] arr, integer i, integer j) =
+(\at((arr + i).intM,L) > \at((arr + j).intM,L))
+
+axiomatic Inversions_for {
+
+  logic integer inversions_for{L}(intP[..] arr_0, integer idx, integer n_1)
+   
+  axiom inv_for_empty{L} :
+  (_C_1 : (\forall intP[..] arr_1;
+            (\forall integer idx_0;
+              (\forall integer n_2;
+                ((n_2 <= idx_0) ==>
+                  (inversions_for{L}(arr_1, idx_0, n_2) == 0))))))
+   
+  axiom inv_for_true{L} :
+  (_C_2 : (\forall intP[..] arr_2;
+            (\forall integer idx_1;
+              (\forall integer n_3;
+                (((idx_1 < n_3) && inversion{L}(arr_2, idx_1, (n_3 - 1))) ==>
+                  (inversions_for{L}(arr_2, idx_1, n_3) ==
+                    (1 + inversions_for{L}(arr_2, idx_1, (n_3 - 1)))))))))
+   
+  axiom inv_for_false{L} :
+  (_C_3 : (\forall intP[..] arr_3;
+            (\forall integer idx_2;
+              (\forall integer n_4;
+                (((idx_2 < n_4) && (! inversion{L}(arr_3, idx_2, (n_4 - 1)))) ==>
+                  (inversions_for{L}(arr_3, idx_2, n_4) ==
+                    inversions_for{L}(arr_3, idx_2, (n_4 - 1))))))))
+  
+}
+
+axiomatic Inversions {
+
+  logic integer inversions{L}(intP[..] arr_4, integer start, integer end_0)
+   
+  axiom inv_nonneg{L} :
+  (_C_4 : (\forall intP[..] arr_5;
+            (\forall integer start_0;
+              (\forall integer end_1;
+                ((start_0 < end_1) ==>
+                  (inversions{L}(arr_5, start_0, end_1) >= 0))))))
+   
+  axiom inv_exchange{L1, L2} :
+  (_C_5 : (\forall intP[..] a1;
+            (\forall intP[..] a2;
+              (\forall integer idx_3;
+                (\forall integer n_5;
+                  (((((idx_3 < (n_5 - 1)) &&
+                       inversion{L1}(a1, idx_3, (idx_3 + 1))) &&
+                      (! inversion{L2}(a2, idx_3, (idx_3 + 1)))) &&
+                     swap{L1,
+                     L2}(a1, a2, idx_3, (idx_3 + 1), n_5)) ==>
+                    (inversions{L2}(a2, 0, n_5) < inversions{L1}(a1, 0, n_5))))))))
+  
+}
+
+axiomatic Permut {
+
+  predicate permut{L1, L2}(intP[..] t1, intP[..] t2, integer n_6)
+   
+  axiom permut_refl{L} :
+  (_C_6 : (\forall intP[..] t;
+            (\forall integer n_7;
+              permut{L, L}(t, t, n_7))))
+   
+  axiom permut_sym{L1, L2} :
+  (_C_7 : (\forall intP[..] t1_0;
+            (\forall intP[..] t2_0;
+              (\forall integer n_8;
+                (permut{L1,
+                  L2}(t1_0, t2_0, n_8) ==>
+                  permut{L2,
+                  L1}(t2_0, t1_0, n_8))))))
+   
+  axiom permut_trans{L1, L2, L3} :
+  (_C_8 : (\forall intP[..] t1_1;
+            (\forall intP[..] t2_1;
+              (\forall intP[..] t3;
+                (\forall integer n_9;
+                  ((permut{L1,
+                     L2}(t1_1, t2_1, n_9) &&
+                     permut{L2,
+                     L3}(t2_1, t3, n_9)) ==>
+                    permut{L1,
+                    L3}(t1_1, t3, n_9)))))))
+   
+  axiom permut_exchange{L1, L2} :
+  (_C_9 : (\forall intP[..] t1_2;
+            (\forall intP[..] t2_2;
+              (\forall integer i_0;
+                (\forall integer j_0;
+                  (\forall integer n_10;
+                    (swap{L1,
+                      L2}(t1_2, t2_2, i_0, j_0, n_10) ==>
+                      permut{L1,
+                      L2}(t1_2, t2_2, n_10))))))))
+  
+}
+
+predicate sorted{L}(intP[..] a, integer start_1, integer n_11) =
+(\forall integer i_1;
+  (((start_1 <= i_1) && (i_1 < (n_11 - 1))) ==>
+    ((a + i_1).intM <= (a + (i_1 + 1)).intM)))
+
+predicate swap{L1, L2}(intP[..] a_0, intP[..] b, integer i_2, integer j_1,
+                       integer n_12) =
+(((\at((a_0 + i_2).intM,L1) == \at((b + j_1).intM,L2)) &&
+   (\at((a_0 + j_1).intM,L1) == \at((b + i_2).intM,L2))) &&
+  (\forall integer k_1;
+    (((((0 <= k_1) && (k_1 < n_12)) && (! (k_1 == i_2))) && (! (k_1 == j_1))) ==>
+      (\at((a_0 + k_1).intM,L1) == \at((b + k_1).intM,L2)))))
+
+unit gnome_rl(intP[..] arr, int32 n_1)
+  requires ((_C_63 : (n_1 > (0 :> int32))) &&
+             (_C_64 : \at((if (\at(0,Here) <=
+                                \at(((n_1 :> integer) - 1),Here)) then 
+                          (((\offset_min(\at(arr,Here)) <= \at(0,Here)) &&
+                             (\offset_max(\at(arr,Here)) >=
+                               \at(((n_1 :> integer) - 1),Here))) &&
+                            (\forall integer __framac_tmp1;
+                              (((\at(0,Here) <= __framac_tmp1) &&
+                                 (__framac_tmp1 <=
+                                   \at(((n_1 :> integer) - 1),Here))) ==>
+                                true))) else true),Here)));
+behavior default:
+  assigns (arr + [0..((n_1 :> integer) - 1)]).intM;
+  ensures (_C_60 : ((_C_61 : sorted{Here}(\at(arr,Old), 0,
+                                          (\at(n_1,Old) :> integer))) &&
+                     (_C_62 : permut{Old,
+                     Here}(\at(arr,Old), \at(arr,Old),
+                           (\at(n_1,Old) :> integer)))));
+{  
+   (var int32 tmp);
+   
+   (var int32 idx);
+   
+   {  (_C_12 : (idx = (_C_11 : ((_C_10 : (n_1 - (1 :> int32))) :> int32))));
+      (if (_C_13 : (n_1 <= (1 :> int32))) then 
+      (goto return_label) else ());
+      (LoopEntry : 
+      loop 
+      behavior default:
+        invariant (_C_18 : ((_C_19 : (((- 1) :> int32) <= idx)) &&
+                             (_C_20 : ((idx :> integer) <=
+                                        ((n_1 :> integer) - 1)))));
+      behavior default:
+        invariant (_C_17 : permut{Pre, Here}(arr, arr, (n_1 :> integer)));
+      behavior default:
+        invariant (_C_16 : sorted{Here}(arr, ((idx :> integer) + 1),
+                                        (n_1 :> integer)));
+      behavior default:
+        invariant (_C_15 : (inversions{Here}(arr, 0, (n_1 :> integer)) >= 0));
+      behavior default:
+        
+        assigns tmp,
+        idx,
+        (arr + [0..((n_1 :> integer) - 1)]).intM;
+      variant (_C_14 : ((inversions{Here}(arr, 0, (n_1 :> integer)) * 2) +
+                         (idx :> integer)));
+      while (true)
+      {  
+         {  (LoopCurrent : (if (_C_21 : (idx >= (0 :> int32))) then () else 
+                           (goto while_0_break)));
+            
+            {  (if (_C_27 : (idx ==
+                              (_C_26 : ((_C_25 : (n_1 - (1 :> int32))) :> int32)))) then 
+               (_C_24 : (idx = (_C_23 : ((_C_22 : (idx - (1 :> int32))) :> int32)))) else ());
+               (if (_C_58 : ((_C_57 : (_C_56 : (arr + idx)).intM) <=
+                              (_C_55 : (_C_54 : (arr +
+                                                  (_C_53 : ((_C_52 : 
+                                                            (idx +
+                                                              (1 :> int32))) :> int32)))).intM))) then 
+               {  (_C_50 : (idx = (_C_49 : ((_C_48 : (idx - (1 :> int32))) :> int32))));
+                  
+                  {  
+                     (assert for default: (_C_51 : (astraver : (\at(idx,Here) <
+                                                                 \at(idx,LoopCurrent)))));
+                     ()
+                  }
+               } else 
+               {  (_C_30 : (tmp = (_C_29 : (_C_28 : (arr + idx)).intM)));
+                  (_C_37 : ((_C_36 : (_C_35 : (arr + idx)).intM) = (_C_34 : 
+                                                                   (_C_33 : 
+                                                                   (arr +
+                                                                    (_C_32 : (
+                                                                    (_C_31 : 
+                                                                    (idx +
+                                                                    (1 :> int32))) :> int32)))).intM)));
+                  (_C_42 : ((_C_41 : (_C_40 : (arr +
+                                                (_C_39 : ((_C_38 : (idx +
+                                                                    (1 :> int32))) :> int32)))).intM) = tmp));
+                  
+                  {  
+                     (assert for default: (_C_43 : (astraver : swap{LoopCurrent,
+                                                   Here}(arr, arr,
+                                                         (idx :> integer),
+                                                         ((idx :> integer) +
+                                                           1),
+                                                         (n_1 :> integer)))));
+                     ()
+                  };
+                  
+                  {  
+                     (assert for default: (_C_44 : (astraver : (inversions{Here}(
+                                                                 arr, 0,
+                                                                 (n_1 :> integer)) <
+                                                                 inversions{LoopCurrent}(
+                                                                 arr, 0,
+                                                                 (n_1 :> integer))))));
+                     ()
+                  };
+                  (_C_47 : (idx = (_C_46 : ((_C_45 : (idx + (1 :> int32))) :> int32))))
+               });
+               
+               {  
+                  (assert for default: (_C_59 : (astraver : (((inversions{Here}(
+                                                                arr, 0,
+                                                                (n_1 :> integer)) *
+                                                                2) +
+                                                               (\at(idx,Here) :> integer)) <
+                                                              ((inversions{LoopCurrent}(
+                                                                 arr, 0,
+                                                                 (n_1 :> integer)) *
+                                                                 2) +
+                                                                (\at(idx,LoopCurrent) :> integer))))));
+                  ()
+               }
+            }
+         }
+      });
+      (while_0_break : ());
+      (return_label : 
+      (return ()))
+   }
+}

@@ -1,0 +1,326 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+
+<HTML><HEAD>
+<TITLE>LBT: LTL to Büchi converter</TITLE>
+<LINK REV=MADE HREF="mailto:msmakela@tcs.hut.fi">
+</HEAD>
+<BODY>
+
+<H1>LBT: LTL to Büchi conversion</H1>
+
+<P>This piece of software provides a C++ implementation for an
+algorithm that converts a linear temporal logic formula to a
+generalised Büchi automaton.  The algorithm comes from</P>
+
+<BLOCKQUOTE><P>R. Gerth, D. Peled, Y. Vardi, and
+<A HREF="http://www.montefiore.ulg.ac.be/%7Epw/">P. Wolper</A>.
+<BR>
+<EM><A HREF="http://www.montefiore.ulg.ac.be/%7Epw/papers/psfiles/GPVW95.ps">Simple on-the-fly automatic verification of linear temporal logic.</A></EM>
+PSTV'95, Fifteenth International Symposium on PROTOCOL SPECIFICATION, TESTING AND VERIFICATION, Warsaw, Poland, 1995.</P></BLOCKQUOTE>
+
+<P>The resulting automaton may be used, for instance, in model
+checking, where it represents a property to be verified from a model
+(e.g. a Petri net).</P>
+
+<H2>Copyright</H2>
+
+<P>The implementation is Copyright © 1999 <A
+HREF="http://staff.cs.utu.fi/%7Emronkko/PROJECT/LTL2BUCHI/abstract.html">Mauno
+Rönkkö</A> &lt;mauno.ronkko@cs.utu.fi&gt;.  The original copyright
+statement follows:</P>
+
+<BLOCKQUOTE><P>This product contains free software; you can
+redistribute it and/or modify it under the terms of the <A
+HREF="http://www.fsf.org/copyleft/gpl.html">GNU General Public
+License</A> as published by the <A HREF="http://www.fsf.org/">Free
+Software Foundation</A>; either version 2 of the License, or (at your
+option) any later version. These terms also apply to any hardware
+schemas and any other information presented in the www-pages
+below.</P>
+
+<P>This product information is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. This also
+applies to any hardware schemas and any other information described in
+the www-pages below. See the GNU General Public License for more
+details.  You should be able to read the GNU General Public License
+via the above link; if not, write to the Free Software Foundation,
+Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</P></BLOCKQUOTE>
+
+<P>Enhancements and packaging are © 1999-2001,2004 Heikki Tauriainen
+&lt;heikki.tauriainen@hut.fi&gt;, and © 2001,2002,2004 Marko Mäkelä
+&lt;marko.makela@hut.fi&gt;.</P>
+
+<H1>Interfacing the Translator</H1>
+
+<P>The translator is designed to be invoked as a subprocess.  It
+parses a linear temporal logic from standard input and writes a
+corresponding generalised Büchi automaton to standard output, and
+exits.  Both the input and output format are based on prefix notation
+that facilitate straightforward recursive-descent parsing.</P>
+
+<H2>Grammar Definitions</H2>
+
+<P>The grammar is presented in Backus-Naur Form, one grammar rule per
+line.  Comments delimited by the symbols <EM>/*</EM> and <EM>*/</EM>
+are not part of the formal grammar.  Non-terminal symbols are enclosed
+within single quotes or presented as <A
+HREF="http://www.gnu.org/software/flex/flex.html">Flex</A>-style
+regular-expressions.</P>
+
+<H3>Input format for LTL formulae</H3>
+
+<H4>Propositional operators</H4>
+
+<TABLE>
+<TR>
+ <TD><A NAME="f">&lt;f&gt;</A> ::=</TD>
+ <TD><CODE>'t'</CODE></TD>
+ <TD><EM>/* true */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'f'</CODE></TD>
+ <TD><EM>/* false */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'p'[0-9]+</CODE></TD>
+ <TD><EM>/* proposition */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'!'</CODE>
+ &lt;<A HREF="#f">f</A>&gt;</TD>
+ <TD><EM>/* negation */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'|'</CODE>
+ &lt;<A HREF="#f">f</A>&gt;
+ &lt;<A HREF="#f">f</A>&gt;</TD>
+ <TD><EM>/* disjunction */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'&'</CODE>
+ &lt;<A HREF="#f">f</A>&gt;
+ &lt;<A HREF="#f">f</A>&gt;</TD>
+ <TD><EM>/* conjunction */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'i'</CODE>
+ &lt;<A HREF="#f">f</A>&gt;
+ &lt;<A HREF="#f">f</A>&gt;</TD>
+ <TD><EM>/* implication:
+ <CODE>"i &lt;f1&gt; &lt;f2&gt;"</CODE> is short-hand for
+ <CODE>"| ! &lt;f1&gt; &lt;f2&gt;"</CODE> */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'e'</CODE>
+ &lt;<A HREF="#f">f</A>&gt;
+ &lt;<A HREF="#f">f</A>&gt;</TD>
+ <TD><EM>/* equivalence */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'^'</CODE>
+ &lt;<A HREF="#f">f</A>&gt;
+ &lt;<A HREF="#f">f</A>&gt;</TD>
+ <TD><EM>/* exclusive disjunction (xor) */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>[ \t\n\r\v\f]</CODE> &lt;<A HREF="#f">f</A>&gt;</TD>
+ <TD><EM>/* white space is ignored */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD>&lt;<A HREF="#f">f</A>&gt; <CODE>[ \t\n\r\v\f]</CODE></TD>
+ <TD><EM>/* white space is ignored */</EM></TD>
+</TR>
+</TABLE>
+
+<H4>Temporal operators</H4>
+
+<TABLE>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'X'</CODE>
+ &lt;<A HREF="#f">f</A>&gt;</TD>
+ <TD><EM>/* next */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'F'</CODE>
+ &lt;<A HREF="#f">f</A>&gt;</TD>
+ <TD><EM>/* finally, eventually */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'G'</CODE>
+ &lt;<A HREF="#f">f</A>&gt;</TD>
+ <TD><EM>/* globally, henceforth */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'U'</CODE>
+ &lt;<A HREF="#f">f</A>&gt;
+ &lt;<A HREF="#f">f</A>&gt;</TD>
+ <TD><EM>/* until */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;f&gt; ::=</TD>
+ <TD><CODE>'V'</CODE>
+ &lt;<A HREF="#f">f</A>&gt;
+ &lt;<A HREF="#f">f</A>&gt;</TD>
+ <TD><EM>/* release */</EM></TD>
+</TR>
+</TABLE>
+
+<H2>Output format for generalised Büchi automata</H2>
+
+<TABLE>
+<TR>
+ <TD><A NAME="space">&lt;space&gt;</A> ::=</TD>
+ <TD><CODE>[ \n]+</CODE></TD>
+</TR>
+<TR>
+ <TD><A NAME="gba">&lt;gba&gt;</A> ::=</TD>
+ <TD><CODE>[0-9]+</CODE> &lt;<A HREF="#space">space</A>&gt;
+ <CODE>[0-9]+</CODE>
+ &lt;<A HREF="#states">states</A>&gt;
+ </TD>
+ <TD><EM>/* first the number of states, then the number of acceptance sets
+ (if 0, all states are accepting) */</EM></TD>
+</TR>
+<TR>
+ <TD><A NAME="states">&lt;states&gt;</A> ::=</TD>
+ <TD><EM>/* empty */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;states&gt; ::=</TD>
+ <TD>&lt;<A HREF="#states">states</A>&gt; &lt;<A HREF="#space">space</A>&gt;
+ &lt;<A HREF="#state">state</A>&gt;</TD>
+</TR>
+<TR>
+ <TD><A NAME="state">&lt;state&gt;</A> ::=</TD>
+ <TD><CODE>[0-9]+</CODE> &lt;<A HREF="#space">space</A>&gt;
+ &lt;<A HREF="#initial">initial?</A>&gt; &lt;<A HREF="#space">space</A>&gt;
+ &lt;<A HREF="#acceptance sets">acceptance sets</A>&gt; '-1'
+ &lt;<A HREF="#transitions">transitions</A>&gt; '-1'</TD>
+ <TD><EM>/* state identifiers can be arbitrary unsigned integers */</EM></TD>
+</TR>
+<TR>
+ <TD><A NAME="initial">&lt;initial?&gt;</A> ::=</TD>
+ <TD><CODE>'0'</CODE></TD>
+ <TD><EM>/* not an initial state */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;initial?&gt; ::=</TD>
+ <TD><CODE>'1'</CODE></TD>
+ <TD><EM>/* initial state (exactly one state must be initial) */</EM></TD>
+</TR>
+<TR>
+ <TD><A NAME="acceptance sets">&lt;acceptance sets&gt;</A> ::=</TD>
+ <TD><EM>/* empty */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;acceptance sets&gt; ::=</TD>
+ <TD>&lt;<A HREF="#acceptance sets">acceptance sets</A>&gt;
+ <CODE>[0-9]+</CODE> &lt;<A HREF="#space">space</A>&gt;</TD>
+ <TD><EM>/* acceptance set identifiers can be arbitrary unsigned integers */</EM></TD>
+</TR>
+<TR>
+ <TD><A NAME="transitions">&lt;transitions&gt;</A> ::=</TD>
+ <TD><EM>/* empty */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;transitions&gt; ::=</TD>
+ <TD>&lt;<A HREF="#transitions">transitions</A>&gt;
+ &lt;<A HREF="#space">space</A>&gt;
+ &lt;<A HREF="#transition">transition</A>&gt;</TD>
+</TR>
+<TR>
+ <TD><A NAME="transition">&lt;transition&gt;</A> ::=</TD>
+ <TD><CODE>[0-9]+</CODE> &lt;<A HREF="#space">space</A>&gt;
+ <CODE>'t'</CODE></TD>
+ <TD><EM>/* constantly enabled transition to
+ a <A HREF="#state">state</A> */</EM></TD>
+</TR>
+<TR>
+ <TD><A NAME="transition">&lt;transition&gt;</A> ::=</TD>
+ <TD><CODE>[0-9]+</CODE> &lt;<A HREF="#space">space</A>&gt;
+ &lt;<A HREF="#gate">gate</A>&gt;</TD>
+ <TD><EM>/* conditionally enabled transition to
+ a <A HREF="#state">state</A> */</EM></TD>
+</TR>
+<TR>
+ <TD><A NAME="gate">&lt;gate&gt;</A> ::=</TD>
+ <TD><CODE>'p'[0-9]+</CODE></TD>
+ <TD><EM>/* proposition */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;gate&gt; ::=</TD>
+ <TD><CODE>'!'</CODE> &lt;<A HREF="#space">space</A>&gt;
+ &lt;<A HREF="#gate">gate</A>&gt;</TD>
+ <TD><EM>/* negation */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;gate&gt; ::=</TD>
+ <TD><CODE>'|'</CODE> &lt;<A HREF="#space">space</A>&gt;
+ &lt;<A HREF="#gate">gate</A>&gt; &lt;<A HREF="#space">space</A>&gt;
+ &lt;<A HREF="#gate">gate</A>&gt;</TD>
+ <TD><EM>/* disjunction */</EM></TD>
+</TR>
+<TR>
+ <TD>&lt;gate&gt; ::=</TD>
+ <TD><CODE>'&'</CODE> &lt;<A HREF="#space">space</A>&gt;
+ &lt;<A HREF="#gate">gate</A>&gt; &lt;<A HREF="#space">space</A>&gt;
+ &lt;<A HREF="#gate">gate</A>&gt;</TD>
+ <TD><EM>/* conjunction */</EM></TD>
+</TR>
+</TABLE>
+
+<P>Note that currently LBT does not generate disjunctions on gate
+conditions.  Also, the initial state is always numbered 0.</P>
+
+<H2>Visualising the Output</H2>
+
+<P>A simple tool, lbt2dot, converts the generalised Büchi automata
+descriptions output by the translator to a format viewable with <A
+HREF="http://www.graphviz.org/">GraphViz</A>, a visualisation tool for
+directed graphs.  Gate expressions are presented as edge labels, and
+state and acceptance set identifiers are presented as node labels.
+The node corresponding to the initial state is shaded.</P>
+
+<P>Here is a sample run involving the filter: <CODE>echo '! G p0' |
+lbt | lbt2dot | dotty -</CODE>.<BR>
+<IMG SRC="notgp0.png" ALT="[Generalised Büchi Automaton of ! G p0]"><BR>
+In the picture above, constructed with the command <CODE>echo '! G p0'
+| lbt | lbt2dot | dot -Tpng -Grankdir=LR -Nfontname=Verdana
+-Efontname=Verdana &gt; notgp0.png</CODE>, the automaton has 4 states,
+identified by the numbers 0, 2, 3, and 4.  The initial state is 0, and
+there is one acceptance set, identified by the number 0.  All states
+except states 0 and 4 belong to this acceptance set.</P>
+
+<P>The above example illustrates that the translation generates
+unnecessary states.  The algoritm never generates loops to the initial
+state.  Clearly, this automaton could be reduced to two states with
+<CODE>t</CODE>-labeled self-loops:<BR>
+<IMG SRC="notgp0-opt.png" ALT="[Optimised Generalised Büchi Automaton of ! G p0]"></P>
+
+<H1>Obtaining the Code</H1>
+
+<P>You can download the code from <A
+HREF="http://www.tcs.hut.fi/maria/src/">http://www.tcs.hut.fi/maria/src/</A>.
+You will need C and C++ compilers such as <A
+HREF="http://gcc.gnu.org/">GCC</A> for compiling the source code.</P>
+
+<P>For the convenience of Windows users, we provide executable files
+that were compiled with gcc-2.95.2 configured as a cross-compiler for
+the <A HREF="http://www.mingw.org/">mingw</A> target platform.</P>
+
+</BODY></HTML>

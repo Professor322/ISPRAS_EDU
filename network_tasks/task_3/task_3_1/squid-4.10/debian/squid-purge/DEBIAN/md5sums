@@ -1,0 +1,9 @@
+5b48b2ad3da7e6977b5f36d178202fe7  usr/bin/squid-purge
+f33c327dff11dabbe6fa6f854a956b3c  usr/share/doc/squid-purge/CONTRIBUTORS.gz
+93b3da227cdb923fc79be6cf316a202b  usr/share/doc/squid-purge/CREDITS.gz
+6abfdc2cb8b979f08ca16f3e16f5c2c0  usr/share/doc/squid-purge/NEWS.Debian.gz
+53675bd5862b659a2e0121a8f1225706  usr/share/doc/squid-purge/README
+5f304d48f40fa7b9d9c47f70f062cb59  usr/share/doc/squid-purge/changelog.Debian.gz
+36d6b65f18fdaead45f164a8d08d8cb5  usr/share/doc/squid-purge/changelog.gz
+63c685b54adb3753e7f9048c28daf51e  usr/share/doc/squid-purge/copyright
+fb65a9b51e0ed0c303aed38fae01bd74  usr/share/man/man1/squid-purge.1.gz

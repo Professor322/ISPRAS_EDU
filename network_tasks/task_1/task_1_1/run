@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#1
+#Gen CA
+openssl genrsa -aes256 -out kochetkovns-msp21-ca.key 4096
+openssl req -x509 -new -config openssl.cnf -reqexts v3_ca -key kochetkovns-msp21-ca.key -days 1825 -subj "/C=RU/ST=Moscow/L=Moscow/O=kochetkovns/OU=kochetkovns P1/CN=kochetkovns CA/emailAddress=nskochetkov@edu.hse.ru" -out kochetkovns-msp21-ca.crt -passin pass:kochetkovns
+
+#Gen Int CA
+openssl genrsa -aes256 -out kochetkovns-msp21-intr.key 4096
+openssl req -new -config openssl.cnf -key kochetkovns-msp21-intr.key -out intr.csr -subj "/C=RU/ST=Moscow/L=Moscow/O=kochetkovns/OU=kochetkovns P1/CN=kochetkovns Intermediate CA/emailAddress=nskochetkov@edu.hse.ru" -passin pass:kochetkovns -reqexts v3_intr_req
+openssl x509 -req -days 365 -CA kochetkovns-msp21-ca.crt -CAkey kochetkovns-msp21-ca.key -CAcreateserial -in intr.csr -out kochetkovns-msp21-intr.crt -extensions v3_intr_ext -extfile openssl.cnf -passin pass:kochetkovns
+
+#Gen Endpoint cert
+openssl genrsa  -out kochetkovns-msp21-basic.key 2048
+openssl req -new -config openssl.cnf -key kochetkovns-msp21-basic.key -subj "/C=RU/ST=Moscow/L=Moscow/O=kochetkovns/OU=kochetkovns P1/CN=kochetkovns Basic/emailAddress=nskochetkov@edu.hse.ru" -reqexts v3_basic_req -out basic.csr -passin pass:kochetkovns
+openssl x509 -req -days 90 -extensions v3_basic_ext -extfile openssl.cnf -CA kochetkovns-msp21-intr.crt -CAkey kochetkovns-msp21-intr.key -CAcreateserial -in basic.csr -out kochetkovns-msp21-basic.crt -passin pass:kochetkovns

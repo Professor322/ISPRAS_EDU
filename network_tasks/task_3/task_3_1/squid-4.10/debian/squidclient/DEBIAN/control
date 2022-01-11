@@ -1,0 +1,19 @@
+Package: squidclient
+Source: squid
+Version: 4.10-1ubuntu1.5
+Architecture: amd64
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Installed-Size: 343
+Depends: libc6 (>= 2.14), libgcc-s1 (>= 3.0), libgnutls30 (>= 3.6.12), libgssapi-krb5-2 (>= 1.17), libnettle7, libstdc++6 (>= 9)
+Recommends: ssl-cert, ca-certificates
+Provides: squid3-client
+Section: web
+Priority: optional
+Homepage: http://www.squid-cache.org
+Description: Full featured Web Proxy cache (HTTP proxy) - HTTP(S) message utility
+ Squid is a high-performance proxy caching server for web clients, supporting
+ FTP, gopher, ICY and HTTP data objects.
+ .
+ This package contains a small utility that can be used to get URLs from the
+ command line.
+Original-Maintainer: Luigi Gangitano <luigi@debian.org>

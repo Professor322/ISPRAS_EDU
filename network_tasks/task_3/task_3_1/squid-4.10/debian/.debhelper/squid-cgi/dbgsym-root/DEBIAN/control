@@ -1,0 +1,14 @@
+Package: squid-cgi-dbgsym
+Package-Type: ddeb
+Source: squid
+Version: 4.10-1ubuntu1.5
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Installed-Size: 301
+Depends: squid-cgi (= 4.10-1ubuntu1.5)
+Section: debug
+Priority: optional
+Description: debug symbols for squid-cgi
+Build-Ids: 3e184dbfa7ca104b886857bad3b756ba12566c17
+Original-Maintainer: Luigi Gangitano <luigi@debian.org>

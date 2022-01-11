@@ -1,0 +1,9 @@
+never ltl_0 {    /* !(! (<> ((step_count==(5*5))))) */
+T0_init:
+	do
+	:: atomic { (((step_count==(5*5)))) -> assert(!(((step_count==(5*5))))) }
+	:: (1) -> goto T0_init
+	od;
+accept_all:
+	skip
+}

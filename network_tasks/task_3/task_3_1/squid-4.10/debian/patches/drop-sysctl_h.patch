@@ -1,0 +1,27 @@
+Description: stop including sys/sysctl.h, deprecated in glibc 2.30
+ From https://savannah.gnu.org/forum/forum.php?forum_id=9515:
+ .
+ The Linux-specific <sys/sysctl.h> header and the sysctl function have been
+ deprecated and will be removed from a future version of glibc.
+ Application should directly access /proc instead.  For obtaining random
+ bits, the getentropy function can be used
+Author: Andreas Hasenack <andreas@canonical.com>
+Bug: https://bugs.squid-cache.org/show_bug.cgi?id=4985
+Bug-Ubuntu: https://bugs.launchpad.net/squid/+bug/1843325
+Last-Update: 2019-09-09
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+diff --git a/src/eui/Eui48.cc b/src/eui/Eui48.cc
+index 0cbe4b3..e8246a8 100644
+--- a/src/eui/Eui48.cc
++++ b/src/eui/Eui48.cc
+@@ -45,9 +45,6 @@ struct arpreq {
+ /* required by Solaris */
+ #include <sys/sockio.h>
+ #endif
+-#if HAVE_SYS_SYSCTL_H
+-#include <sys/sysctl.h>
+-#endif
+ #if HAVE_NET_ROUTE_H
+ #include <net/route.h>
+ #endif

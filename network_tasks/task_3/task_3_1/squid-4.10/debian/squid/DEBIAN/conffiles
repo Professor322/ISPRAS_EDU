@@ -1,0 +1,8 @@
+/etc/apparmor.d/usr.sbin.squid
+/etc/init.d/squid
+/etc/logrotate.d/squid
+/etc/resolvconf/update-libc.d/squid
+/etc/squid/conf.d/debian.conf
+/etc/squid/errorpage.css
+/etc/squid/squid.conf
+/etc/ufw/applications.d/squid

@@ -1,0 +1,3 @@
+/home/kolek/Edu_ISPRAS/formal_verification/buchi_fsm/CMakeFiles/edit_cache.dir
+/home/kolek/Edu_ISPRAS/formal_verification/buchi_fsm/CMakeFiles/rebuild_cache.dir
+/home/kolek/Edu_ISPRAS/formal_verification/buchi_fsm/CMakeFiles/buchi.dir

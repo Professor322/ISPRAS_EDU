@@ -1,0 +1,3 @@
+#!/bin/bash
+../../mutpy/bin/mut.py --target ticket_machine --unit-test test_ticket_machine -m
+

@@ -1,0 +1,51 @@
+#!/bin/bash
+#Gen OCSP valid endpoint cert
+openssl genrsa  -out kochetkovns-msp21-ocsp-valid.key 2048
+openssl req -new -config openssl.cnf -key kochetkovns-msp21-ocsp-valid.key -subj "/C=RU/ST=Moscow/L=Moscow/O=kochetkovns/OU=kochetkovns P3/CN=kochetkovns OCSP Valid/emailAddress=nskochetkov@edu.hse.ru" -reqexts v3_ocsp_valid_req -out ocsp-valid.csr -passin pass:kochetkovns
+openssl x509 -req -days 90 -extensions v3_ocsp_valid_ext -extfile openssl.cnf -CA ../task_1_1/kochetkovns-msp21-intr.crt -CAkey ../task_1_1/kochetkovns-msp21-intr.key -CAcreateserial -in ocsp-valid.csr -out kochetkovns-msp21-ocsp-valid.crt -passin pass:kochetkovns
+
+#Gen OCSP revoked endpoint cert
+openssl genrsa  -out kochetkovns-msp21-ocsp-revoked.key 2048
+openssl req -new -config openssl.cnf -key kochetkovns-msp21-ocsp-revoked.key -subj "/C=RU/ST=Moscow/L=Moscow/O=kochetkovns/OU=kochetkovns P3/CN=kochetkovns OCSP Revoked/emailAddress=nskochetkov@edu.hse.ru" -reqexts v3_ocsp_revoked_req -out ocsp-revoked.csr -passin pass:kochetkovns
+openssl x509 -req -days 90 -extensions v3_ocsp_revoked_ext -extfile openssl.cnf -CA ../task_1_1/kochetkovns-msp21-intr.crt -CAkey ../task_1_1/kochetkovns-msp21-intr.key -CAcreateserial -in ocsp-revoked.csr -out kochetkovns-msp21-ocsp-revoked.crt -passin pass:kochetkovns
+
+#Revoke
+openssl ca -config openssl.cnf -cert ../task_1_1/kochetkovns-msp21-intr.crt -keyfile ../task_1_1/kochetkovns-msp21-intr.key -revoke kochetkovns-msp21-ocsp-revoked.crt -passin pass:kochetkovns
+
+#Make the cert valid in the database
+openssl ca -config openssl.cnf -cert ../task_1_1/kochetkovns-msp21-intr.crt -keyfile ../task_1_1/kochetkovns-msp21-intr.key -valid kochetkovns-msp21-ocsp-valid.crt -passin pass:kochetkovns
+
+#Gen OCSP responder cert
+openssl genrsa -aes256 -out kochetkovns-msp21-ocsp-resp.key 4096
+openssl req -new -config openssl.cnf -key kochetkovns-msp21-ocsp-resp.key -subj "/C=RU/ST=Moscow/L=Moscow/O=kochetkovns/OU=kochetkovns P3/CN=kochetkovns OCSP Responder/emailAddress=nskochetkov@edu.hse.ru" -reqexts v3_ocsp_resp_req -out ocsp-resp.csr -passin pass:kochetkovns
+openssl x509 -req -days 365 -extensions v3_ocsp_resp_ext -extfile openssl.cnf -CA ../task_1_1/kochetkovns-msp21-intr.crt -CAkey ../task_1_1/kochetkovns-msp21-intr.key -CAcreateserial -in ocsp-resp.csr -out kochetkovns-msp21-ocsp-resp.crt -passin pass:kochetkovns
+
+#Create chain
+cat ../task_1_1/kochetkovns-msp21-ca.crt ../task_1_1/kochetkovns-msp21-intr.crt kochetkovns-msp21-ocsp-valid.crt kochetkovns-msp21-ocsp-revoked.crt > kochetkovns-msp21-chain.crt
+
+#Verify
+openssl verify -crl_check -CRLfile kochetkovns-msp21.crl -CAfile kochetkovns-msp21-chain.crt kochetkovns-msp21-ocsp-valid.crt
+openssl verify -crl_check -CRLfile kochetkovns-msp21.crl -CAfile kochetkovns-msp21-chain.crt kochetkovns-msp21-ocsp-revoked.crt
+
+#OCSP respo server start
+ openssl ocsp \
+ -port 2560 \
+ -index index.txt \
+ -CA kochetkovns-msp21-chain.crt \
+ -rkey kochetkovns-msp21-ocsp-resp.key \
+ -rsigner kochetkovns-msp21-ocsp-resp.crt \
+ -out ocsp.log \
+ -text
+
+# OCSP client requests 
+  openssl ocsp \
+ -url http://ocsp.kochetkovns.ru:2560 \
+ -CAfile kochetkovns-msp21-chain.crt \
+ -issuer ../task_1_1/kochetkovns-msp21-intr.crt \
+ -cert kochetkovns-msp21-ocsp-revoked.crt
+ 
+  openssl ocsp \
+ -url http://ocsp.kochetkovns.ru:2560 \
+ -CAfile kochetkovns-msp21-chain.crt \
+ -issuer ../task_1_1/kochetkovns-msp21-intr.crt \
+ -cert kochetkovns-msp21-ocsp-valid.crt

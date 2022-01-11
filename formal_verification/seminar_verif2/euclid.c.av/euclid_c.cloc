@@ -1,0 +1,160 @@
+[euclid]
+name = "Function euclid"
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 20
+begin = 4
+end = 24
+
+[_C_4]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 21
+begin = 5
+end = 6
+
+[_C_19]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 17
+begin = 12
+end = 32
+
+[_C_13]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 34
+begin = 3
+end = 9
+
+[_C_5]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 22
+begin = 5
+end = 6
+
+[_C_12]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 34
+begin = 3
+end = 9
+
+[_C_22]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 15
+begin = 22
+end = 27
+
+[_C_9]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 24
+begin = 20
+end = 25
+
+[_C_6]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 27
+begin = 18
+end = 28
+
+[_C_20]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 15
+begin = 13
+end = 27
+
+[gcd_equal]
+name = "Lemma gcd_equal"
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 2
+begin = 45
+end = 128
+
+[_C_3]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 10
+begin = 3
+end = 84
+
+[_C_17]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 32
+begin = 3
+end = 9
+
+[_C_7]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 25
+begin = 20
+end = 41
+
+[_C_15]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 32
+begin = 3
+end = 9
+
+[_C_10]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 24
+begin = 29
+end = 34
+
+[_C_8]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 24
+begin = 20
+end = 34
+
+[_C_18]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 31
+begin = 6
+end = 11
+
+[_C_14]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 34
+begin = 3
+end = 9
+
+[gcd_comm]
+name = "Lemma gcd_comm"
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 5
+begin = 35
+end = 135
+
+[gcd_add]
+name = "Lemma gcd_add"
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 8
+begin = 48
+end = 151
+
+[_C_2]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 7
+begin = 3
+end = 80
+
+[_C_16]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 32
+begin = 3
+end = 9
+
+[_C_1]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 4
+begin = 6
+end = 59
+
+[_C_11]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 30
+begin = 8
+end = 14
+
+[_C_21]
+file = "/home/kolek/seminar_verif2/euclid.c"
+line = 15
+begin = 13
+end = 18
+

@@ -1,0 +1,57 @@
+Format: 1.8
+Date: Mon, 04 Oct 2021 08:31:27 -0400
+Source: squid
+Binary: squid squid-cgi squid-common squid-purge squidclient
+Architecture: amd64 all
+Version: 4.10-1ubuntu1.5
+Distribution: focal-security
+Urgency: medium
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Changed-By: Marc Deslauriers <marc.deslauriers@ubuntu.com>
+Description:
+ squid      - Full featured Web Proxy cache (HTTP proxy)
+ squid-cgi  - Full featured Web Proxy cache (HTTP proxy) - control CGI
+ squid-common - Full featured Web Proxy cache (HTTP proxy) - common files
+ squid-purge - Full featured Web Proxy cache (HTTP proxy) - cache management uti
+ squidclient - Full featured Web Proxy cache (HTTP proxy) - HTTP(S) message util
+Changes:
+ squid (4.10-1ubuntu1.5) focal-security; urgency=medium
+ .
+   * SECURITY UPDATE: information disclosure via OOB read in WCCP protocol
+     - debian/patches/CVE-2021-28116.patch: validate packets better in
+       src/wccp2.cc.
+     - CVE-2021-28116
+Checksums-Sha1:
+ 588b75cd7be1ac5f70713e7fb4ee9c104aca59a5 269576 squid-cgi-dbgsym_4.10-1ubuntu1.5_amd64.ddeb
+ 210c893618076cce128155b62e3bea18b9a8ebe1 194932 squid-cgi_4.10-1ubuntu1.5_amd64.deb
+ 4dc271c7e892d65799861472a3c45a5b2ee6af50 317928 squid-common_4.10-1ubuntu1.5_all.deb
+ 3a59cfc539f9fd7cfff1660334b9a6767d9f6829 36250572 squid-dbgsym_4.10-1ubuntu1.5_amd64.ddeb
+ 469a2e22d3488d1f50fefe0b1432102112e49028 136756 squid-purge-dbgsym_4.10-1ubuntu1.5_amd64.ddeb
+ dc5c4613cb7c67c6ed175b7c7f56e799f2b92693 184064 squid-purge_4.10-1ubuntu1.5_amd64.deb
+ 77514aebaf95c37970290f2d2e903d41ff6b9cf5 12514 squid_4.10-1ubuntu1.5_amd64.buildinfo
+ 1bf7c4f94dad5a78ad785e126f446c2fee5e76bb 2840196 squid_4.10-1ubuntu1.5_amd64.deb
+ 48b3f16111f424326b875118ccb93904f425e23c 310212 squidclient-dbgsym_4.10-1ubuntu1.5_amd64.ddeb
+ a4d58fed5f63e53e6baadcdd407e7b437283f920 197788 squidclient_4.10-1ubuntu1.5_amd64.deb
+Checksums-Sha256:
+ c693cbaef2a7e3975b981dad75953528f622a17d066a67765514aebca90ae902 269576 squid-cgi-dbgsym_4.10-1ubuntu1.5_amd64.ddeb
+ 736a26cbe49041d36f157857b6dfb685a32e697cbb3133b9b9cf5eecdc890226 194932 squid-cgi_4.10-1ubuntu1.5_amd64.deb
+ 395f99485806e2309899482924455b48d137addd7d264119af35673f5b3f1b73 317928 squid-common_4.10-1ubuntu1.5_all.deb
+ 2882e000549f3e5f02e9ccc155bb127e2e6600e2f9eab004270a3ded1d0b3dc1 36250572 squid-dbgsym_4.10-1ubuntu1.5_amd64.ddeb
+ 87b117dbb0d907476dd81c94e583d1fbcec71fa9e1139f52e95573df4f1a29ef 136756 squid-purge-dbgsym_4.10-1ubuntu1.5_amd64.ddeb
+ 77316e034cb6fd48b41547a3d51dc371da1957c63127760b2f6dbc6d84858dd5 184064 squid-purge_4.10-1ubuntu1.5_amd64.deb
+ acf37a454d1fa71cb855480389eaccf96e939ab14594decf304b96c4f21b4181 12514 squid_4.10-1ubuntu1.5_amd64.buildinfo
+ 0764f317f63368529c1c05b234e5c853140222d9ed739937e641a37f85ba72b7 2840196 squid_4.10-1ubuntu1.5_amd64.deb
+ 684cb0513a7e8de1e16cf07b6aa04e9bb7fb30760fa667d4fd7f09a53b97f21e 310212 squidclient-dbgsym_4.10-1ubuntu1.5_amd64.ddeb
+ d8a6045e46defc7459a8b3295b6aa357b624921ae0acdcde66576a0acad3cb1c 197788 squidclient_4.10-1ubuntu1.5_amd64.deb
+Files:
+ 8e616cc4c0638e145912220cd8a7d0cb 269576 debug optional squid-cgi-dbgsym_4.10-1ubuntu1.5_amd64.ddeb
+ 93a98c73d376398e864fdb945140592a 194932 web optional squid-cgi_4.10-1ubuntu1.5_amd64.deb
+ db7e4833bb2eeaf1a702d4b9aa8c6a29 317928 web optional squid-common_4.10-1ubuntu1.5_all.deb
+ cb2d3143c6e068efc4d566ae64c2df19 36250572 debug optional squid-dbgsym_4.10-1ubuntu1.5_amd64.ddeb
+ 7efe78341111400b4db5804a3705fee4 136756 debug optional squid-purge-dbgsym_4.10-1ubuntu1.5_amd64.ddeb
+ 0e677feeab7820e19be639f04ab30b32 184064 web optional squid-purge_4.10-1ubuntu1.5_amd64.deb
+ 41fdcae54b768428ac88b0d78bd36bc3 12514 web optional squid_4.10-1ubuntu1.5_amd64.buildinfo
+ cd348d906bbd425979e380d5ba13434a 2840196 web optional squid_4.10-1ubuntu1.5_amd64.deb
+ e08e5d9cef396c331286de915349da30 310212 debug optional squidclient-dbgsym_4.10-1ubuntu1.5_amd64.ddeb
+ f976dd5f1730109aa8adf8a6d826cec8 197788 web optional squidclient_4.10-1ubuntu1.5_amd64.deb
+Original-Maintainer: Luigi Gangitano <luigi@debian.org>

@@ -1,0 +1,66 @@
+#Kochetkov Nikolai Sergeevich mSP21
+
+#Sequence generation (SEQ, OPS, WIN, and T1)
+
+#Packet #1: window scale (10), NOP, MSS (1460), timestamp (TSval: 0xFFFFFFFF; TSecr: 0), SACK permitted. The window field is 1.
+alert tcp any any -> any any (msg: "SG-1"; sid: 1000001; flags: S; dsize: 0; window: 1;)
+
+#Packet #2: MSS (1400), window scale (0), SACK permitted, timestamp (TSval: 0xFFFFFFFF; TSecr: 0), EOL. The window field is 63.
+alert tcp any any -> any any (msg: "SG-2"; sid: 1000002; flags: S; dsize: 0; window: 63;)
+
+#Packet #3: Timestamp (TSval: 0xFFFFFFFF; TSecr: 0), NOP, NOP, window scale (5), NOP, MSS (640). The window field is 4.
+alert tcp any any -> any any (msg: "SG-3"; sid: 1000003; flags: S; dsize: 0; window: 4;)
+
+#Packet #4: SACK permitted, Timestamp (TSval: 0xFFFFFFFF; TSecr: 0), window scale (10), EOL. The window field is 4.
+alert tcp any any -> any any (msg: "SG-4"; sid: 1000004; flags: S; dsize: 0; window: 4;)
+
+#Packet #5: MSS (536), SACK permitted, Timestamp (TSval: 0xFFFFFFFF; TSecr: 0), window scale (10), EOL. The window field is 16.
+alert tcp any any -> any any (msg: "SG-5"; sid: 1000005; flags: S; dsize: 0; window: 16;)
+
+#Packet #6: MSS (265), SACK permitted, Timestamp (TSval: 0xFFFFFFFF; TSecr: 0). The window field is 512.
+alert tcp any any -> any any (msg: "SG-6"; sid: 1000006; flags: S; dsize: 0; window: 512;)
+
+
+#ICMP echo (IE)
+#The first one has the IP DF bit set, a type-of-service (TOS) byte value of zero, a code of nine (even though it should be zero), 
+#the sequence number 295, a random IP ID and ICMP request identifier, and 120 bytes of 0x00 for the data payload
+alert icmp any any -> any any (msg: "IE-1"; sid: 1000007; fragbits: D; tos: 0; icode: 9; \
+			       icmp_seq: 295; itype: 8; dsize: 120; content: "|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00|";)
+
+#The second ping query is similar, except a TOS of four (IP_TOS_RELIABILITY) is used, the code is zero, 150 bytes of data is sent, 
+#and the ICMP request ID and sequence numbers are incremented by one from the previous query values
+alert icmp any any -> any any (msg: "IE-2"; sid: 1000008; tos: 4; icode: 0; \
+			       icmp_seq: 296; itype: 8; dsize: 150; content: "|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00|";)
+
+#TCP explicit congestion notification (ECN)
+# Nmap tests this by sending a SYN packet which also has the ECN CWR and ECE congestion control flags set.
+#  For an unrelated (to ECN) test, the urgent field value of 0xF7F5 is used even though the urgent flag is not set. 
+#  The acknowledgment number is zero, sequence number is random, window size field is three, 
+#  and the reserved bit which immediately precedes the CWR bit is set. 
+#  TCP options are WScale (10), NOP, MSS (1460), SACK permitted, NOP, NOP.
+alert tcp any any -> any any (msg: "ECN-1"; sid: 1000009; flags: SEC; ack: 0; window: 3;)
+
+#TCP (T2–T7)
+#T2 sends a TCP null (no flags set) packet with the IP DF bit set and a window field of 128 to an open port.
+alert tcp any any -> any any (msg: "T-2"; sid: 10000010; flags: 0; fragbits: D; window: 128;)
+#T3 sends a TCP packet with the SYN, FIN, URG, and PSH flags set and a window field of 256 to an open port. The IP DF bit is not set.
+alert tcp any any -> any any (msg: "T-3"; sid: 10000011; flags: SFUP; fragbits: !D; window: 256;)
+#T4 sends a TCP ACK packet with IP DF and a window field of 1024 to an open port.
+alert tcp any any -> any any (msg: "T-4"; sid: 10000012; flags: A; fragbits: D; window: 1024;)
+#T5 sends a TCP SYN packet without IP DF and a window field of 31337 to a closed port
+alert tcp any any -> any any (msg: "T-5"; sid: 10000013; flags: S; fragbits: !D; window: 31337;)
+#T6 sends a TCP ACK packet with IP DF and a window field of 32768 to a closed port.
+alert tcp any any -> any any (msg: "T-6"; sid: 10000014; flags: A; fragbits: D; window: 32768;)
+#T7 sends a TCP packet with the FIN, PSH, and URG flags set and a window field of 65535 to a closed port. The IP DF bit is not set.
+alert tcp any any -> any any (msg: "T-7"; sid: 10000015; flags: FPU; fragbits: !D; window: 65535;)
+
+#UDP (U1)
+# The character ‘C’ (0x43) is repeated 300 times for the data field. 
+# The IP ID value is set to 0x1042 for operating systems which allow us to set this
+#alert udp any any -> any any (msg: "U-1"; sid: 10000016; id: 4162; dsize: 300; \
+#			     content: "|43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43|";)
+
+
+alert udp any any -> any any (msg: "U-1"; sid: 10000016; id: 4162;  \
+			     content: "|43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43 43|"; \
+			     pcre: "/C{300}/";)

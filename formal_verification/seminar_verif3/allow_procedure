@@ -1,0 +1,24 @@
+f(f(f(f(f(a))))) = a &
+f(f(f(a))) = a &
+f(a) ! = a
+
+
+R = {(f5, a), (f3, a), 
+	(f4, f1), (f5, f2),(f3, f2), (f2, a)}
+
+{ f5, f3, a, f2
+{ f4, f1
+
+
+{f5, f3, a, f2, f4, f1} 
+
+
+f(f(f(f(f(a, b))))) = c && 
+f(f(f(a, b,))) = c && 
+f(a, b) != c
+
+
+g(f(a), b) = f(a) & //g1
+g(f(b), b) = a &  //g2
+g(f(a), f(b)) = f(b) //g3
+f(a) = f(b)

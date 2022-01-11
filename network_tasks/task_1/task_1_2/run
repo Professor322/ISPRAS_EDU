@@ -1,0 +1,26 @@
+#!/bin/bash
+#2
+#Gen CRL endpoint cert
+openssl genrsa  -out kochetkovns-msp21-crl-valid.key 2048
+openssl req -new -config openssl.cnf -key kochetkovns-msp21-crl-valid.key -subj "/C=RU/ST=Moscow/L=Moscow/O=kochetkovns/OU=kochetkovns P2/CN=kochetkovns CRL Valid/emailAddress=nskochetkov@edu.hse.ru" -reqexts v3_crl_valid_req -out crl-valid.csr -passin pass:kochetkovns
+openssl x509 -req -days 90 -extensions v3_crl_valid_ext -extfile openssl.cnf -CA ../task_1_1/kochetkovns-msp21-intr.crt -CAkey ../task_1_1/kochetkovns-msp21-intr.key -CAcreateserial -in crl-valid.csr -out kochetkovns-msp21-crl-valid.crt -passin pass:kochetkovns
+
+#Gen CRL endpoint cert
+openssl genrsa  -out kochetkovns-msp21-crl-revoked.key 2048
+openssl req -new -config openssl.cnf -key kochetkovns-msp21-crl-revoked.key -subj "/C=RU/ST=Moscow/L=Moscow/O=kochetkovns/OU=kochetkovns P2/CN=kochetkovns CRL Revoked/emailAddress=nskochetkov@edu.hse.ru" -reqexts v3_crl_revoked_req -out crl-revoked.csr -passin pass:kochetkovns
+openssl x509 -req -days 90 -extensions v3_crl_revoked_ext -extfile openssl.cnf -CA ../task_1_1/kochetkovns-msp21-intr.crt -CAkey ../task_1_1/kochetkovns-msp21-intr.key -CAcreateserial -in crl-revoked.csr -out kochetkovns-msp21-crl-revoked.crt -passin pass:kochetkovns -passin pass:kochetkovns
+
+
+#RevokeOCSP_basic_add1_status
+openssl ca -config openssl.cnf -cert ../task_1_1/kochetkovns-msp21-intr.crt -keyfile ../task_1_1/kochetkovns-msp21-intr.key -revoke kochetkovns-msp21-crl-revoked.crt -passin pass:kochetkovns
+
+#Gen CRL of CA
+openssl ca -config openssl.cnf -cert ../task_1_1/kochetkovns-msp21-intr.crt -keyfile ../task_1_1/kochetkovns-msp21-intr.key -gencrl -out kochetkovns-msp21.crl -passin pass:kochetkovns
+
+#Create chain
+cat ../task_1_1/kochetkovns-msp21-ca.crt ../task_1_1/kochetkovns-msp21-intr.crt kochetkovns-msp21-crl-valid.crt kochetkovns-msp21-crl-revoked.crt > kochetkovns-msp21-chain.crt
+
+#Verify
+openssl verify -crl_check -CRLfile kochetkovns-msp21.crl -CAfile kochetkovns-msp21-chain.crt kochetkovns-msp21-crl-valid.crt
+openssl verify -crl_check -CRLfile kochetkovns-msp21.crl -CAfile kochetkovns-msp21-chain.crt kochetkovns-msp21-crl-revoked.crt
+

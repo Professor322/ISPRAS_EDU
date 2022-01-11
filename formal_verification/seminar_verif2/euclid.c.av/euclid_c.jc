@@ -1,0 +1,81 @@
+
+axiomatic Padding {
+
+  logic type padding
+  
+}
+
+tag voidP = {
+}
+
+type voidP = [voidP]
+
+tag charP = voidP with {
+  int8 charM: 8;
+}
+
+axiomatic GCD {
+
+  logic integer gcd(integer x, integer y)
+   
+  axiom gcd_equal :
+  (_C_1 : (\forall integer x_0;
+            ((x_0 > 0) ==> (gcd(x_0, x_0) == x_0))))
+   
+  axiom gcd_comm :
+  (_C_2 : (\forall integer x_1;
+            (\forall integer y_0;
+              (((x_1 > 0) && (y_0 > 0)) ==> (gcd(x_1, y_0) == gcd(y_0, x_1))))))
+   
+  axiom gcd_add :
+  (_C_3 : (\forall integer x_2;
+            (\forall integer y_1;
+              (((x_2 > 0) && (y_1 > 0)) ==>
+                (gcd((x_2 + y_1), y_1) == gcd(x_2, y_1))))))
+  
+}
+
+int32 euclid(int32 a, int32 b)
+  requires (_C_20 : ((_C_21 : (a > (0 :> int32))) &&
+                      (_C_22 : (b > (0 :> int32)))));
+behavior default:
+  assigns \nothing;
+  ensures (_C_19 : ((\result :> integer) ==
+                     gcd((\at(a,Old) :> integer), (\at(b,Old) :> integer))));
+{  
+   (var int32 x);
+   
+   (var int32 y);
+   
+   {  (_C_4 : (x = a));
+      (_C_5 : (y = b));
+      (LoopEntry : 
+      loop 
+      behavior default:
+        invariant (_C_8 : ((_C_9 : (x > (0 :> int32))) &&
+                            (_C_10 : (y > (0 :> int32)))));
+      behavior default:
+        invariant (_C_7 : (gcd((x :> integer), (y :> integer)) ==
+                            gcd((a :> integer), (b :> integer))));
+      behavior default:
+        
+        assigns x,
+        y;
+      variant (_C_6 : \integer_max((x :> integer), (y :> integer)));
+      while (true)
+      {  
+         {  (LoopCurrent : (if (_C_11 : (x != y)) then () else 
+                           (goto while_0_break)));
+            
+            {  (if (_C_18 : (x > y)) then (_C_17 : (x = (_C_16 : ((_C_15 : 
+                                                                  (x -
+                                                                    y)) :> int32)))) else 
+               (_C_14 : (y = (_C_13 : ((_C_12 : (y - x)) :> int32)))))
+            }
+         }
+      });
+      (while_0_break : ());
+      
+      (return x)
+   }
+}

@@ -1,0 +1,18 @@
+# Kazmin Sergey mSP21
+alert tcp any any -> any any ( msg:"SG-1"; sid:1000001; flags:S; window:1; dsize:0; )
+alert tcp any any -> any any ( msg:"SG-2"; sid:1000002; flags:S; window:63; dsize:0; )
+alert tcp any any -> any any ( msg:"SG-3"; sid:1000003; flags:S; window:4; dsize:0; )
+alert tcp any any -> any any ( msg:"SG-4"; sid:1000004; flags:S; window:4; dsize:0; )
+alert tcp any any -> any any ( msg:"SG-5"; sid:1000005; flags:S; window:16; dsize:0; )
+alert tcp any any -> any any ( msg:"SG-6"; sid:1000006; flags:S; window:512; dsize:0; )
+alert icmp any any -> any any ( msg:"IE-1"; sid:1000007; tos:0; itype:8; icode:9; icmp_seq:295; dsize:120; content:"|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00|"; )
+alert icmp any any -> any any ( msg:"IE-2"; sid:1000008; tos:4; itype:8; icode:0; icmp_seq:296; dsize:150; content:"|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00|"; )
+alert tcp any any -> any any ( msg:"ECN-1"; sid:1000009; flags:SEC; ack:0; window:3; )
+alert tcp any any -> any any ( msg:"T-2"; sid:1000010; flags:0; fragbits: D; window:128; )
+alert tcp any any -> any any ( msg:"T-3"; sid:1000011; flags:SFUP; fragbits:!D; window:256; )
+alert tcp any any -> any any ( msg:"T-4"; sid:1000012; flags:A; fragbits:D; window:1024; )
+alert tcp any any -> any any ( msg:"T-5"; sid:1000013; flags:S; fragbits:!D; window: 31337; )
+alert tcp any any -> any any ( msg:"T-6"; sid:1000014; flags:A; fragbits:D; window:32768; )
+alert tcp any any -> any any ( msg:"T-7"; sid:1000015; flags:FPU; fragbits:!D; window:65535; )
+alert udp any any -> any any ( msg:"U-1"; sid:1000016; id:4162; dsize:300; content:"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"; )
+

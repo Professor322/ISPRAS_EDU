@@ -1,0 +1,44 @@
+2004-12-29  Marko Mäkelä  <Marko.Makela@HUT.FI>
+	* NEWS: Release 1.2.2, 29th December 2004
+
+2004-12-27  Marko Mäkelä  <Marko.Makela@HUT.FI>
+
+	* ChangeLog, NEWS: Moved up one level from doc/ChangeLog
+	* Makefile: Merge with lbt 1.1.1
+	* NEWS, doc/index.html: Update for lbt 1.2.2
+
+2004-09-03  Heikki Tauriainen  <heikki.tauriainen@hut.fi>
+
+	* LtlGraph.h (LtlGraph::expand, LtlGraph::add): Remove.
+	* LtlGraph.C: Include the <stack> header.
+	(LtlGraph::LtlGraph): Use an explicit stack of pointers to
+	unexpanded nodes (instead of recursion) to drive node expansion.
+	Use STL	operations for merging sets.
+	(LtlGraph::expand): Remove.
+
+	* Ltl.C (LtlAtom::expand, LtlConstant::expand, LtlJunct::expand)
+	(LtlIff::expand, LtlUntil::expand, LtlFuture::expand): Adjust to
+	make use of a stack of unexpanded nodes. Remove redundant state
+	number arguments.
+	* Ltl.h: Include the <stack> header.
+	(Ltl::expand, LtlAtom::expand, LtlConstant::expand)
+	(LtlJunct::expand, LtlIff::expand, LtlUntil::expand)
+	(LtlFuture::expand): Adjust prototypes.
+
+2002-04-19  Marko Mäkelä  <Marko.Makela@HUT.FI>
+
+	lbt 1.2.1 was released.
+
+	* NEWS: Described these changes.
+	* notgp0.png, notgp0-opt.png: Rendered with anti-aliased fonts.
+	* index.html: Corrected a few minor errors in the grammar,
+	and updated the address of Mauno Rönkkö.
+
+2001-10-03  Marko Mäkelä  <Marko.Makela@HUT.FI>
+
+	lbt 1.2 was released.
+
+	* NEWS: Initial revision
+	* BitVector.h, BitVector.C: Initial revision
+	* Makefile: Added a few variable definitions
+
